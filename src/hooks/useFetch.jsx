@@ -3,16 +3,20 @@ import { useState, useEffect, useCallback } from "react";
 const useFetch = () => {
   const [dogURL, setDogURL] = useState(null);
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchDog = useCallback(async () => {
+    setError(null);
+    setIsLoading(true);
     try {
-      setError(null);
       const response = await fetch("https://random.dog/woof.json");
       const data = await response.json();
-      console.log(data)
+      console.log(data);
       setDogURL(data.url);
     } catch (error) {
-      setError("Failed to fetch dog image");
+      setError("Failed to fetch dog image:", error.message);
+    } finally {
+      setIsLoading(false);
     }
   }, []);
 
@@ -20,7 +24,7 @@ const useFetch = () => {
     fetchDog();
   }, [fetchDog]);
 
-  return { dogURL, error, fetchDog };
+  return { dogURL, error, isLoading, fetchDog };
 };
 
 export default useFetch;
